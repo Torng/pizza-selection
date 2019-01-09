@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>login</title>
+        <script src="https://code.jquery.com/jquery-3.1.1.min.js">
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+            <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet">
+        </script>
+        <style>
+            #login{
+                width: 350px;
+                margin: 0 auto;
+                margin-top: 200px;
+            }
+            #exampleModalLabel{
+                margin: 0 0 0 135px;
+            }
+            #account{
+                text-align: center
+            }
+            #password{
+                text-align: center
+            }
+            #loginbut{
+                margin: 0px 0px 0 20px;
+            }
+            #signbut{
+                margin: 0 0px 0px 90px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="modal" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="t drue" data-backdrop="static">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content" id="login">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="exampleModalLabel">登入</h3>
+                        <form id="box" action="first">
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="account" placeholder="請輸入帳號">
+                            </div>
+                            <!--
+</form>
+
+<form id="passwordbox">
+-->
+                            <div class="form-group">
+                                <input type="password"  class="form-control" id="password" placeholder="請輸入密碼">
+                            </div>
+                            <a href="/signup" class="btn btn-success" id="signbut">註冊</a>
+                            <button type="submit" class="btn btn-primary" id="loginbut">登入</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            $('#exampleModal').modal('show');
+            $(function () {
+                var bol = false
+                var aret = ""
+                var psw = ""
+                var dic = ""
+                var dic2 = ""
+                var dic3;
+                var test = 0;
+                //                $( "#password" ).focusout(function() {
+                //                    $.ajax({
+                //                        url: '/compare',
+                //                        type: 'GET',
+                //                        data : { 
+                //                            username : $("#account").val(),
+                //                            password : $("#password").val()
+                //                        },
+                //                        dataType: "text",
+                //                        error: function(xhr) {
+                //                            alert('Ajax request 發生錯誤');
+                //                        },
+                //                        success: function(a) {
+                //                            dic = a
+                //                            dic2 = dic.split(',')
+                //                            aret = dic2[0].substring(6,dic2[0].length-1)
+                //                            var tf = dic2[1].substring(4,dic2[1].length-1)
+                //                            if(tf == "true"){
+                //                                bol = true
+                //                            }else{
+                //                                bol = false
+                //                            }
+                //                            console.log(bol)
+                //                        }
+                //                    });
+                //                    
+                //                });
+                //                $( "#account" ).focusout(function() {
+                //                    $.ajax({
+                //                        url: '/compare',
+                //                        type: 'GET',
+                //                        data : { 
+                //                            username : $("#account").val(),
+                //                            password : $("#password").val()
+                //                        },
+                //                        dataType: "text",
+                //                        error: function(xhr) {
+                //                            alert('Ajax request 發生錯誤');
+                //                        },
+                //                        success: function(a) {
+                //                            dic = a
+                //                            dic2 = dic.split(',')
+                //                            aret = dic2[0].substring(6,dic2[0].length-1)
+                //                            var tf = dic2[1].substring(4,dic2[1].length-1)
+                //                            if(tf == "true"){
+                //                                bol = true
+                //                            }else{
+                //                                bol = false
+                //                            }
+                //                            console.log(bol)
+                //                        }
+                //                    });
+                //                    
+                //                });
+                $("#box").submit(function(e) {
+                    if(test == 0){
+                        e.preventDefault();
+                    }else{
+                        return bol
+                    }
+                    $.ajax({
+                        url: '/compare',
+                        type: 'GET',
+                        data : { 
+                            username : $("#account").val(),
+                            password : $("#password").val()
+                        },
+                        dataType: "text",
+                        error: function(xhr) {
+                            alert('Ajax request 發生錯誤');
+                        },
+                        success: function(a) {
+                            dic = a
+                            dic2 = dic.split(',')
+                            aret = dic2[0].substring(6,dic2[0].length-1)
+                            var tf = dic2[1].substring(4,dic2[1].length-1)
+                            if(tf == "true"){
+                                bol = true
+                            }else{
+                                bol = false
+                            }
+                            test = 1
+
+                        }
+                    });
+                    setTimeout(function () {
+                        if(test == 1){
+                            if(aret != ""){
+                                alert(aret)
+                                bol = false
+                                $('#box').submit()
+                            }
+                            else{
+                                bol = true
+                                $('#box').submit()
+                            }
+                        }else{
+                            e.preventDefault();
+                        }
+                        test = 0
+                    },400);
+
+
+
+
+
+
+
+
+                    //                    if(aret != ""){
+                    //                        alert(aret)
+                    //                    }
+                    //                    return bol
+                });
+            });
+        </script>
+    </body>
+</html>

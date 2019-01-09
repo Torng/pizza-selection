@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+    <head>
+        <title>test</title>
+        <style>
+            body{
+                background-color: #CCFFFF;
+            }
+            #roomtext{
+                /*            border: 2px solid red;*/
+                margin: 0px auto;
+                margin-top: 20%;
+                width:400px;
+                top: 50%;
+                left: 50%;
+            }
+            #line{
+                order:1px;
+                border-bottom-style: solid;
+                border-top-style: none;
+                border-left-style:none;
+                border-right-style:none;
+                font-size: 40px;
+                background-color: #FFFFCC;
+                text-align: center;
+                border-radius: 7px;
+            }
+            #but{
+                font-size: 30px;
+                width: 100px;
+                height: 40px;
+                margin : 0 45% 0 37%;
+                background:#ccc;
+                border:0 none;
+                cursor:pointer;
+                -webkit-border-radius: 5px;
+                border-radius: 7px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="roomtext" >
+            <form action="/index">
+                <input id="line" placeholder="請輸入房間號碼" type="number" size="20" name='room'><button id="but">enter</button>
+            </form>
+        </div>
+        <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+        <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+        <script>
+            $(function () {
+                var socket = io();
+                $('form').submit(function(){
+                    if($('#line').val()!= ''){
+                        socket.emit('room', $('#line').val());
+                        return true;
+                    }else{
+                        socket.emit('room', "default");
+                        return true;
+                    }
+                });
+                //        socket.on('chat message', function(msg){
+                //          $('#messages').append($('<li>').text(msg));
+                //          window.scrollTo(0, document.body.scrollHeight);
+                //        });
+            });
+        </script>
+    </body>
+</html>

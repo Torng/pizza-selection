@@ -1,0 +1,141 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Socket.IO chat</title>
+
+        <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { font: 13px Helvetica, Arial; }
+            #form1 { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+            #form1 input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+            #form1 button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+            #messages { list-style-type: none; margin: 0; padding: 0; }
+            #messages li { padding: 5px 5px; }
+            #messages li:nth-child(odd) { background: #eee; }
+            #messages { margin-bottom: 40px }
+        </style>
+        <script src="https://www.gstatic.com/firebasejs/5.7.0/firebase.js"></script>
+        <script>
+            var config = {
+                apiKey: "AIzaSyASI6EIy_6vriuqARTXgYVdCQDrCScXtO8",
+                authDomain: "myweb-80e96.firebaseapp.com",
+                databaseURL: "https://myweb-80e96.firebaseio.com",
+                projectId: "myweb-80e96",
+                storageBucket: "myweb-80e96.appspot.com",
+                messagingSenderId: "127912984026"
+            };
+            firebase.initializeApp(config);
+        </script>
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="modal" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="t drue" >
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">請輸入暱稱</h5>
+                        <form id="form2">
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="recipient-name">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="namebut">Enter</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <ul  id="messages"></ul>
+        <form action="" id="form1">
+            <input id="m" autocomplete="off" /><button>Send</button>
+        </form>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <!-- Include all compiled plugins (below), or include individual files as needed -->
+
+        <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+        <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <script>
+            var database = firebase.database();
+            $("#exampleModal").modal({backdrop: 'static', keyboard: false}); 
+            var a = 0;
+            var url = location.href;
+            var url2 = url.split("?");
+            var url3 = url2[1].split("=");
+            var whosname = "";
+            var mesg;
+            var namearr = [];
+            if(a == 0){
+                $(function () {
+                    $('#exampleModal').modal('show');
+                    a = a+ 1;
+                });
+            }
+            var socket = io();
+            $(document).ready(function(){
+                $("#namebut").click(function(){
+                    socket.emit('room',url3[1]);
+                    socket.on('namearr',function(arr){
+                        namearr = arr
+                        if(namearr.indexOf($('#recipient-name').val()) >= 0){
+                            alert("暱稱已被使用")
+                            $('#exampleModal').modal('show');
+                        }
+                        else{
+                            socket.on("severmessage"+url3[1],function(meg){
+                                console.log(meg);
+                                $('#messages').append($('<li>').text(meg));
+                                window.scrollTo(0, document.body.scrollHeight);
+                                socket.emit("nickname",$('#recipient-name').val());
+                            });
+                             $('#exampleModal').modal('hide');
+                        }
+                    });
+//                    $('#exampleModal').modal('hide');
+//                    socket.on("severmessage"+url3[1],function(meg){
+//                        console.log(meg);
+//                        $('#messages').append($('<li>').text(meg));
+//                        window.scrollTo(0, document.body.scrollHeight);
+//                    });
+
+
+                });
+            });
+            $(function () {
+                $('#form1').submit(function(){
+                    socket.emit(url3[1], $('#m').val());
+                    $('#m').val('');
+                    return false;
+                });
+                var mess = 'message'+url3[1];
+                //                socket.on('whosmes'+url3[1],function(name){
+                //
+                //                    whosname = name;
+                //                });
+                socket.on('whosmes'+url3[1],function(name){
+                    console.log(name);
+                    whosname = name;
+                });
+                socket.on(mess,function(data){
+                    if(whosname == $('#recipient-name').val().toString()){
+                        $('#messages').append($('<li style="text-align:right;background-color:#7FFFD4;">').text(data));
+
+                        window.scrollTo(0, document.body.scrollHeight);
+                    }else{
+                        console.log(data)
+                        $('#messages').append($('<li>').text(data));
+                        window.scrollTo(0, document.body.scrollHeight);
+                    }
+                });
+
+
+            });
+
+        </script>
+    </body>
+</html>
